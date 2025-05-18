@@ -22,7 +22,7 @@ public class HelloApplication extends Application {
 
         // Default File Button
         Button defaultFileButton = new Button("Use Default OSM File");
-        defaultFileButton.setOnAction(e -> loadOSMFile("data/small.osm", stage));
+        defaultFileButton.setOnAction(e -> loadOSMFile("data/bornholm.osm.zip", stage));
 
         // File Chooser Button
         Button uploadFileButton = new Button("Upload OSM File");
