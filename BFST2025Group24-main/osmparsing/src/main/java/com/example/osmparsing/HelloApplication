@@ -1,0 +1,63 @@
+package com.example.osmparsing;
+
+import com.example.osmparsing.MVC.Controller;
+import com.example.osmparsing.MVC.Model;
+import com.example.osmparsing.MVC.View;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.scene.control.Button;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.IOException;
+
+public class HelloApplication extends Application {
+    @Override
+    public void start(Stage stage) {
+        stage.setTitle("OSM File Loader");
+
+        // Default File Button
+        Button defaultFileButton = new Button("Use Default OSM File");
+        defaultFileButton.setOnAction(e -> loadOSMFile("data/small.osm", stage));
+
+        // File Chooser Button
+        Button uploadFileButton = new Button("Upload OSM File");
+        uploadFileButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("OSM Files", "*.osm"));
+            File selectedFile = fileChooser.showOpenDialog(stage);
+
+            if (selectedFile != null) {
+                loadOSMFile(selectedFile.getAbsolutePath(), stage);
+            }
+        });
+
+        // Layout
+        VBox root = new VBox(10, defaultFileButton, uploadFileButton);
+        root.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+        Scene scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void loadOSMFile(String filename, Stage stage) {
+        try {
+            var model = Model.load(filename);
+            var view = new View(model, stage);
+            new Controller(model, view);
+        } catch (IOException | XMLStreamException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NonInvertibleTransformException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+}
